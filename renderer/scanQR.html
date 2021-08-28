@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Wp Mailer</title>
+  </head>
+  <body>
+    <div id='app'>
+      <h1>Auto whatsapp mailer</h1>
+      <h2>Scan QR code:</h2>
+      <div сlass="canvasWrapper">
+        <canvas id="canvas"></canvas>
+        <div id="canvas-loading" class="canvas-loading"> Loading... </div>
+      </div>
+    </div>
+    <script src="./scanQR.js"></script>
+  </body>
+</html>
