@@ -11,11 +11,12 @@ const deleteTodo = (e) => {
 const canvas = document.getElementById("canvas");
 const canvasLoading = document.getElementById("qrcode-loading");
 
+const header = document.getElementById("header");
 
 ipcRenderer.on("qrcode", (event, qrcode) => {
     toCanvas(canvas, qrcode, function (error) {
         if (error) console.error(error);
-        console.log(qrcode);
         canvasLoading.classList.toggle("visually-hidden");
+        header.classList.toggle("visually-hidden");
     });
 });

@@ -10,28 +10,31 @@ const ClientsStore = require("./wp/ClientsStore");
 
 
 require("electron-reload")(__dirname);
-const contactsStore = new DataStore({ name: "contacts" });
 
+const contactsStore = new DataStore({ name: "contacts" });
 const clientsStore = new ClientsStore({ name: "clients" });
+// clientsStore.delete("session");
 
 async function main () {
-    // let currentClient = clientsStore.get('phonenumber');
-    let currentClient = false;
+    let currentClientSession = clientsStore.get("session");
+    // currentClientSession === undefined | currentClientSession = sesion
+    const wp = new Wp({
+        session: currentClientSession,
+    });
 
-    if (currentClient) {
-    } else {
-        const wp = new Wp();
+    const initWindow = openInitWindow({
+        onQRCode: wp.onPromised("qr"),
+    });
+
+    if (!currentClientSession) {
         // const qrcode = `1@SoBUOQORTq2AH/LfnECaCuqtx9l1ndYGx9q1H0uMzDJxdpUwTEqhJb3tcTsx758Me1Uqs4liWCfH4w==,NeaeKSHGLeNksu+pgOmhQGuYGQ+4KbbkVrTQ19JH3x4=,jRrVFGQ5ye7T/VTOrW7Sdg==`;
-        const scanQRWindow = openScanQRWindow({
-            onQRCode: wp.onPromised("qr"),
-        });
 
-        await wp.onPromised("ready");
+        const session = await wp.onPromised("authenticated");
+        clientsStore.set("session", session);
 
-
-        const {
-            wid: { user: clientNumber },
-        } = wp.info;
+        // const {
+        //     wid: { user: clientNumber },
+        // } = wp.info;
 
         //
 
@@ -41,31 +44,42 @@ async function main () {
         //     console.log(message);
         //     wp.sendMessage(message.from, message.body);
         // });
-
-        scanQRWindow.close();
     }
 
-    openMainWindow({ contacts: [1, 2, 3] });
+    // warning ! re-call
+    wp.on("auth_failure", () => {
+        clientsStore.delete("session");
+        main();
+        initWindow.close();
+    });
+    // 
+
+    await wp.onPromised("ready");
+
+    const contacts = await wp.getContacts();
+    openMainWindow({ contacts });
+
+    initWindow.close();
 
     /**
      * @param {Object} data - data which are used in view.
      * @param {Promise} data.onQRCode - Promise for qr code.
      */
-    function openScanQRWindow({ onQRCode }) {
-        const scanQRWindow = new Window({
-            file: path.join("renderer", "scanQR.html"),
+    function openInitWindow({ onQRCode }) {
+        const initWindow = new Window({
+            file: path.join("renderer", "init.html"),
             width: 500,
             height: 500,
         });
-        // scanQRWindow.webContents.openDevTools({ mode: "detach" });
+        // initWindow.webContents.openDevTools({ mode: "detach" });
 
-        scanQRWindow.once("show", async () => {
+        initWindow.once("show", async () => {
             const qrcode = await onQRCode;
 
-            scanQRWindow.webContents.send("qrcode", qrcode);
+            initWindow.webContents.send("qrcode", qrcode);
         });
 
-        return scanQRWindow;
+        return initWindow;
     }
 
     /**

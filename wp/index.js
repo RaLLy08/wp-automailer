@@ -13,8 +13,8 @@ const { Client } = require("whatsapp-web.js");
 
 
 class Wp extends Client {
-    constructor() {
-        super();
+    constructor(settings) {
+        super(settings);
         this.initialize();
     }
 
