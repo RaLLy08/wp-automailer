@@ -3,17 +3,25 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" >
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="scanQR.css">
     <title>Wp Mailer</title>
   </head>
   <body>
-    <div id='app'>
-      <h1>Auto whatsapp mailer</h1>
-      <h2>Scan QR code:</h2>
-      <div сlass="canvasWrapper">
-        <canvas id="canvas"></canvas>
-        <div id="canvas-loading" class="canvas-loading"> Loading... </div>
+    <div class="wrapper">
+      <div class="wrapper__header">
+        <h2>Scan QR code:</h2>
+      </div>
+      <div class="wrapper__qrcode-wrapper qrcode-wrapper">
+        <div class="qrcode-wrapper__canvas-wrapper">
+          <canvas id="canvas"></canvas>
+        </div>
+        <div class="qrcode-wrapper__loading" id="qrcode-loading">
+          <div class="loading__title"> Loading </div>  
+          <div class="spinner-border" role="status"></div> 
+        </div>
       </div>
     </div>
     <script src="./scanQR.js"></script>

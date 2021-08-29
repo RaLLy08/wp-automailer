@@ -1,5 +1,5 @@
 {
-  "name": "electrontrain",
+  "name": "wp-automailer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,8 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^5.1.0",
     "electron": "^13.2.3",
     "electron-reload": "^2.0.0-alpha.1",
+    "electron-store": "^8.0.0",
     "qrcode": "^1.4.4",
     "whatsapp-web.js": "^1.14.0"
   }

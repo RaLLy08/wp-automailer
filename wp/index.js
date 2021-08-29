@@ -18,8 +18,10 @@ class Wp extends Client {
         this.initialize();
     }
 
-    onQr(cb) {
-        this.on('qr', cb);
+    onPromised(type) { 
+        return new Promise((res, rej) => {
+            this.on(type, res)
+        })
     }
 }
 

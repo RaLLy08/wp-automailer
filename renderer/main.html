@@ -5,13 +5,15 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="../node_modules/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="main.css">
     <title>Wp Mailer</title>
   </head>
   <body>
     <div id='app'>
-      <h2>Chats</h2>
-
+      <h2>Contacts</h2>
+      <div id='contacts'></div>
     </div>
-    <script src="./index.js"></script>
+    <script src="./main.js"></script>
   </body>
 </html>

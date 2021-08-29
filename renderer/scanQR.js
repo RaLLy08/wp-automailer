@@ -8,21 +8,14 @@ const deleteTodo = (e) => {
     ipcRenderer.send("delete-todo", e.target.textContent);
 };
 
-// create add todo window button
 const canvas = document.getElementById("canvas");
-const canvasLoading = document.getElementById("canvas-loading");
-// TEMP
-canvasLoading.style.display = 'block';
-canvas.style.display = "none";
-// TEMP
+const canvasLoading = document.getElementById("qrcode-loading");
+
 
 ipcRenderer.on("qrcode", (event, qrcode) => {
     toCanvas(canvas, qrcode, function (error) {
         if (error) console.error(error);
-        // TEMP
-        canvasLoading.style.display = "none";
-        canvas.style.display = "block";
-        // TEMP
+        console.log(qrcode);
+        canvasLoading.classList.toggle("visually-hidden");
     });
-    // todoList.innerHTML = todoItems;
 });

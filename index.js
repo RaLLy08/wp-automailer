@@ -5,43 +5,88 @@ const { app, ipcMain } = require("electron");
 
 const Window = require("./Window");
 const Wp = require("./wp");
+const DataStore = require("./DataStore");
+const ClientsStore = require("./wp/ClientsStore");
+
 
 require("electron-reload")(__dirname);
+const contactsStore = new DataStore({ name: "contacts" });
 
-// create a new todo store name "Todos Main"
+const clientsStore = new ClientsStore({ name: "clients" });
 
-function main() {
-    // todo list window
-    const scanQRWindow = new Window({
-        file: path.join("renderer", "scanQR.html"),
-        width: 400,
-        height: 400,
-    });
+async function main () {
+    // let currentClient = clientsStore.get('phonenumber');
+    let currentClient = false;
 
-    scanQRWindow.once("show", () => {
+    if (currentClient) {
+    } else {
         const wp = new Wp();
-
-        wp.onQr((qr) => {
-            scanQRWindow.webContents.send("qrcode", qr);
+        // const qrcode = `1@SoBUOQORTq2AH/LfnECaCuqtx9l1ndYGx9q1H0uMzDJxdpUwTEqhJb3tcTsx758Me1Uqs4liWCfH4w==,NeaeKSHGLeNksu+pgOmhQGuYGQ+4KbbkVrTQ19JH3x4=,jRrVFGQ5ye7T/VTOrW7Sdg==`;
+        const scanQRWindow = openScanQRWindow({
+            onQRCode: wp.onPromised("qr"),
         });
 
-        wp.on("ready", () => {
-            const mainWindow = new Window({
-                file: path.join("renderer", "main.html"),
-            });
-
-            scanQRWindow.close();
-
-            // wp.getContacts().then((e) => console.log(e));
+        await wp.onPromised("ready");
 
 
-            // wp.on("message", (message) => {
-            //     console.log(message);
-            //     wp.sendMessage(message.from, message.body);
-            // });
+        const {
+            wid: { user: clientNumber },
+        } = wp.info;
+
+        //
+
+        // store.setContacts(clientNumber, contacts);
+
+        // wp.on("message", (message) => {
+        //     console.log(message);
+        //     wp.sendMessage(message.from, message.body);
+        // });
+
+        scanQRWindow.close();
+    }
+
+    openMainWindow({ contacts: [1, 2, 3] });
+
+    /**
+     * @param {Object} data - data which are used in view.
+     * @param {Promise} data.onQRCode - Promise for qr code.
+     */
+    function openScanQRWindow({ onQRCode }) {
+        const scanQRWindow = new Window({
+            file: path.join("renderer", "scanQR.html"),
+            width: 500,
+            height: 500,
+        });
+        // scanQRWindow.webContents.openDevTools({ mode: "detach" });
+
+        scanQRWindow.once("show", async () => {
+            const qrcode = await onQRCode;
+
+            scanQRWindow.webContents.send("qrcode", qrcode);
         });
 
-    });
+        return scanQRWindow;
+    }
+
+    /**
+     * @param {Object} data - data which are used in view.
+     * @param {Array} data.contacts - contacts
+     */
+    function openMainWindow({ contacts }) {
+        const mainWindow = new Window({
+            file: path.join("renderer", "main.html"),
+        });
+
+        mainWindow.webContents.openDevTools({ mode: "detach" });
+
+        mainWindow.once("show", async () => {
+            // const contacts = await wp.getContacts();
+
+            mainWindow.webContents.send("contacts", contacts);
+        });
+
+        return mainWindow;
+    }
 }
 
 app.on("ready", main);
