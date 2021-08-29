@@ -13,59 +13,78 @@ require("electron-reload")(__dirname);
 
 const contactsStore = new DataStore({ name: "contacts" });
 const clientsStore = new ClientsStore({ name: "clients" });
-// clientsStore.delete("session");
+clientsStore.set('session', {})
 
-async function main () {
-    let currentClientSession = clientsStore.get("session");
-    // currentClientSession === undefined | currentClientSession = sesion
-    const wp = new Wp({
-        session: currentClientSession,
-    });
+class Main {
+    constructor() {
+        this.session = clientsStore.get("session") || null;
+        this.loading = true; // 
+        
+        this.initWindow = this.initClient();
 
-    const initWindow = openInitWindow({
-        onQRCode: wp.onPromised("qr"),
-    });
+        this.wp.on("auth_failure", () => {
+            this.session = null;
+            this.removeSession();
 
-    if (!currentClientSession) {
-        // const qrcode = `1@SoBUOQORTq2AH/LfnECaCuqtx9l1ndYGx9q1H0uMzDJxdpUwTEqhJb3tcTsx758Me1Uqs4liWCfH4w==,NeaeKSHGLeNksu+pgOmhQGuYGQ+4KbbkVrTQ19JH3x4=,jRrVFGQ5ye7T/VTOrW7Sdg==`;
+            console.log("failed");
+            // this.reInitClient();
+        });
 
-        const session = await wp.onPromised("authenticated");
-        clientsStore.set("session", session);
+        this.wp.on("ready", () => {
+            this.openMainWindow({ contacts: [1] });
 
-        // const {
-        //     wid: { user: clientNumber },
-        // } = wp.info;
+            this.initWindow.close();
+        });
 
-        //
+        this.wp.on("authenticated", (session) => {
+            if (!this.session) {
+                this.session = session;
+                saveSession();
+            }
+        });
 
-        // store.setContacts(clientNumber, contacts);
-
-        // wp.on("message", (message) => {
-        //     console.log(message);
-        //     wp.sendMessage(message.from, message.body);
+        // this.wp.on("qr", (qr) => {
+        //     this.loading = false; // 
         // });
     }
 
-    // warning ! re-call
-    wp.on("auth_failure", () => {
+    removeSession() {
         clientsStore.delete("session");
-        main();
-        initWindow.close();
-    });
+    }
+
+    saveSession() {
+        clientsStore.set("session", this.session);
+    }
+    // warn
+    reInitClient = () => {
+        const newWindow = this.initClient();
+        this.initWindow.close();
+
+        this.initWindow = newWindow;
+    }
     // 
+    initClient = () => {
+        this.wp = new Wp({
+            session: this.session,
+        });
 
-    await wp.onPromised("ready");
+        //this.initWindow && initWindow.close();
 
-    const contacts = await wp.getContacts();
-    openMainWindow({ contacts });
+        return this.openInitWindow({
+            onQRCode: (onQRListener, setLoading) => {
+                let firstLoading = false;
+                setLoading(true);
 
-    initWindow.close();
+                this.wp.on("qr", (qr) => {
+                    onQRListener(qr);
+                    firstLoading || setLoading(false);
+                    firstLoading = true;
+                });
+            },
+        });
+    };
 
-    /**
-     * @param {Object} data - data which are used in view.
-     * @param {Promise} data.onQRCode - Promise for qr code.
-     */
-    function openInitWindow({ onQRCode }) {
+    openInitWindow({ onQRCode }) {
         const initWindow = new Window({
             file: path.join("renderer", "init.html"),
             width: 500,
@@ -74,19 +93,16 @@ async function main () {
         // initWindow.webContents.openDevTools({ mode: "detach" });
 
         initWindow.once("show", async () => {
-            const qrcode = await onQRCode;
-
-            initWindow.webContents.send("qrcode", qrcode);
+            onQRCode(
+                (qrcode) => initWindow.webContents.send("qrcode", qrcode),
+                (loading) => initWindow.webContents.send("loading", loading)
+            );
         });
 
         return initWindow;
     }
 
-    /**
-     * @param {Object} data - data which are used in view.
-     * @param {Array} data.contacts - contacts
-     */
-    function openMainWindow({ contacts }) {
+    openMainWindow({ contacts }) {
         const mainWindow = new Window({
             file: path.join("renderer", "main.html"),
         });
@@ -103,7 +119,8 @@ async function main () {
     }
 }
 
-app.on("ready", main);
+
+app.on("ready", () => new Main);
 
 app.on("window-all-closed", function () {
     app.quit();

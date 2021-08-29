@@ -16,7 +16,16 @@ const header = document.getElementById("header");
 ipcRenderer.on("qrcode", (event, qrcode) => {
     toCanvas(canvas, qrcode, function (error) {
         if (error) console.error(error);
-        canvasLoading.classList.toggle("visually-hidden");
-        header.classList.toggle("visually-hidden");
     });
 });
+
+// change loading !! under all content remove while loading
+ipcRenderer.on("loading", (event, isLoading) => {
+    const hasLoading = canvasLoading.classList.contains('visually-hidden')
+    console.log(hasLoading);
+
+    isLoading
+        ? hasLoading && canvasLoading.classList.remove("visually-hidden")
+        : !hasLoading && canvasLoading.classList.add("visually-hidden");
+});
+
