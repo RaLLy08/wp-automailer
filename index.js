@@ -14,62 +14,57 @@ require("electron-reload")(__dirname);
 
 const contactsStore = new DataStore({ name: "contacts" });
 const clientsStore = new ClientsStore({ name: "clients" });
-// clientsStore.set('session', {})
-clientsStore.delete('session')
-class EventEmitter {
+clientsStore.set('session', {})
+// clientsStore.delete('session')
+class Main {
     constructor() {
-        this._events = [];
-    }
-
-    subscribe(event, listener) {
-        if (!Array.isArray(this._events[event])) {
-            this._events[event] = [];
-        }
-        console.log(event, 'subscribed');
-        this._events[event].push(listener);
-    }
-
-    emit(event, arg) {
-        if (Array.isArray(this._events[event])) {
-            this._events[event].slice().forEach((lsn) => lsn(arg));
-            console.log(event, "emited", arg);
-        }
-    }
-}
-
-
-class Main extends EventEmitter {
-    constructor() {
-        super();
-        
         this.session = clientsStore.get("session") || null;
         this.loading = true; //
+        this.client = null;
+        this.initWindow = null;
 
-        this.initWindow = this.openInitWindow();
-        
-        this.client = this.initClient();
-
-        this.client.on("qr", (qr) => {
-            this.emit("qrcodedisplay", qr);
-
-            if (this.loading) {
-                this.emit("loading", false);
-                this.loading = false;
-            }
+        this.setClient();
+        this.setInitWindow({
+            initialLoading: this.loading,
         });
+
+        this.initialize();
 
         this.client.on("auth_failure", () => {
             this.session = null;
             this.removeSession();
+            
+            this.initWindow.webContents.send(
+                "error",
+                "something wrong, restarting app.."
+            );
 
-            console.log("failed");
-            this.initClient();
+
+            this.setClient();
+            this.initialize();
+        });
+    }
+
+    setClient = () => {
+        this.client = new Wp({
+            session: this.session,
+        });
+    };
+
+    initialize = () => {
+        this.client.on("qr", (qrcode) => {
+            this.initWindow.webContents.send("qrcode", qrcode);
+
+            if (this.loading) {
+                this.initWindow.webContents.send("loading", false);
+                this.loading = false;
+            }
         });
 
         this.client.on("authenticated", (session) => {
             if (!this.session) {
                 this.session = session;
-                saveSession();
+                this.saveSession();
             }
         });
 
@@ -78,7 +73,7 @@ class Main extends EventEmitter {
             // new MainWindow
             this.initWindow.close();
         });
-    }
+    };
 
     removeSession() {
         clientsStore.delete("session");
@@ -88,34 +83,26 @@ class Main extends EventEmitter {
         clientsStore.set("session", this.session);
     }
 
-    initClient = () => {
-        return new Wp({
-            session: this.session,
-        });
-    };
-
-    openInitWindow() {
-        const initWindow = new Window({
+    setInitWindow({ initialLoading }) {
+        this.initWindow = new Window({
             file: path.join("renderer", "init.html"),
             width: 500,
             height: 500,
         });
         // initWindow.webContents.openDevTools({ mode: "detach" });
-  
-        this.subscribe("qrcodedisplay", (qrcode) =>
-            initWindow.webContents.send("qrcode", qrcode)
-        );
 
-        this.subscribe("loading", (loading) =>
-            initWindow.webContents.send("loading", loading)
-        );
+        // this.subscribe("qrcodedisplay", (qrcode) =>
+        //     initWindow.webContents.send("qrcode", qrcode)
+        // );
 
-        initWindow.once("show", () => {
+        // this.subscribe("loading", (loading) =>
+        //     initWindow.webContents.send("loading", loading)
+        // );
+
+        this.initWindow.once("show", () => {
             // initial loading
-            this.emit("loading", this.loading);
+            this.initWindow.webContents.send("loading", initialLoading);
         });
-        
-        return initWindow;
     }
 
     openMainWindow({ contacts }) {
