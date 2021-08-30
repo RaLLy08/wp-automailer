@@ -14,7 +14,7 @@ require("electron-reload")(__dirname);
 
 const contactsStore = new DataStore({ name: "contacts" });
 const clientsStore = new ClientsStore({ name: "clients" });
-clientsStore.set('session', {})
+// clientsStore.set('session', {})
 // clientsStore.delete('session')
 class Main {
     constructor() {
@@ -85,7 +85,7 @@ class Main {
 
     setInitWindow({ initialLoading }) {
         this.initWindow = new Window({
-            file: path.join("renderer", "init.html"),
+            file: path.join("renderer", "start.html"),
             width: 500,
             height: 500,
         });
