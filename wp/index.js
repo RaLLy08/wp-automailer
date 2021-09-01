@@ -1,15 +1,6 @@
 const { Client } = require("whatsapp-web.js");
 
 
-// client.on("qr", (qr) => {
-//     console.log("QR RECEIVED", qr);
-// });
-
-// client.on("ready", () => {
-//     console.log("Client is ready!");
-// });
-
-// client.initialize();
 
 
 class Wp extends Client {
@@ -18,11 +9,11 @@ class Wp extends Client {
         this.initialize();
     }
 
-    onPromised(type) { 
-        return new Promise((res, rej) => {
-            this.on(type, res)
-        })
-    }
+    // onPromised(type) { 
+    //     return new Promise((res, rej) => {
+    //         this.on(type, res)
+    //     })
+    // }
 }
 
-module.exports = Wp;
+module.exports = () => new Wp();

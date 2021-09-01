@@ -1,25 +1,23 @@
-const Store = require("electron-store");
+// const Store = require("electron-store");
 
-class ClientsStore extends Store {
-    constructor(settings) {
-        super(settings);
+// class ClientsStore extends Store {
+//     constructor(settings) {
+//         super(settings);
 
-        // initialize with todos or empty array
+//         // this.contacts = this.get("contacts") || [];
+//     }
 
-        // this.contacts = this.get("contacts") || [];
-    }
+//     setClient(clientNumber, client) {
+//         // save todos to JSON file
+//         this.set(clientNumber, contacts);
+//         
+//         return this;
+//     }
 
-    setClient(clientNumber, client) {
-        // save todos to JSON file
-        this.set(clientNumber, contacts);
-        // returning 'this' allows method chaining
-        return this;
-    }
+//     getClient(clientNumber) {
+//         
+//         return this.get(clientNumber);
+//     }
+// }
 
-    getClient(clientNumber) {
-        // set object's todos to todos in JSON file
-        return this.get(clientNumber);
-    }
-}
-
-module.exports = ClientsStore;
+// module.exports = ClientsStore;

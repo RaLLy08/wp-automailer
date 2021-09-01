@@ -11,30 +11,41 @@ body {
     align-items: center;
 }
 
-.wrapper__header {
+.wrapper__qrcode {
     display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.wrapper__qrcode-wrapper  {
+
+.qrcode__wrapper  {
     width: 228px;
     height: 228px;
-    position: relative;
 }
 
-.qrcode-wrapper__canvas-wrapper {
-    position: absolute;
-}
 
-.qrcode-wrapper__loading {
+
+/* .wrapper__loading {
     display: flex;
     justify-content: center;
     position: relative;
     align-items: center;
     width: 100%;
     height: 100%;
+} */
+
+
+.wrapper__loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .loading__title {
-    top: 60px;
-    position: absolute;
+    width: 100%;
+    text-align: center;
+    transform: translate(0%, -120%);
 }
