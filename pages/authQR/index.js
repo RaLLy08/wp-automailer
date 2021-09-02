@@ -9,7 +9,7 @@ class Controller {
     constructor(model, view) {
         this._model = model;
         this._view = view;
-        this._model.delete(SESSION);
+       
         this.onClientReadyCb = null;
         this.isQRLoaded = false;
         this.session = this._model.get(SESSION);
