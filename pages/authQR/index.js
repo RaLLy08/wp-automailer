@@ -10,7 +10,7 @@ class Controller {
         this._model = model;
         this._view = view;
        
-        this.onClientReadyCb = null;
+        this.onReadyResolve = null;
         this.isQRLoaded = false;
         this.session = this._model.get(SESSION);
 
@@ -41,9 +41,13 @@ class Controller {
         });
     }
 
-    onClientReady = (cb) => {
-        this.onClientReadyCb = cb;
-    };
+    onClientReady = () => new Promise((res, rej) => {
+        this.onReadyResolve = res;
+    })
+
+    closeWindow = () => {
+        this._view.close();
+    }
 
     initialize = () => {
         this.client = new Client({
@@ -69,13 +73,13 @@ class Controller {
         });
 
         this.client.on("ready", () => {
-            this.onClientReadyCb &&
-                this.onClientReadyCb(this.client, this._view);
+            this._view.webContents.send(LOADING, true);
+            this._view.webContents.send(LOADING_TEXT, eng.LAUNCHING);
+
+            this.onReadyResolve && this.onReadyResolve(this.client);
             // this.openMainWindow({ contacts: [1] });
             // new MainWindow
             // this.initWindow.close();
-            this._view.webContents.send(LOADING, true);
-            this._view.webContents.send(LOADING_TEXT, eng.LAUNCHING);
         });
     };
 }

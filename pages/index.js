@@ -1,8 +1,10 @@
 const getAuthQRpage = require('./authQR');
-
+const getMainPage = require('./main')
 
 const authQRpage = getAuthQRpage();
 
-authQRpage.onClientReady((client, view) => {
-    console.log('client');
-});
+authQRpage.onClientReady().then(client => {
+    const mainPage = getMainPage(client);
+
+    authQRpage.closeWindow();
+})
