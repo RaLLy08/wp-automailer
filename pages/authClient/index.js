@@ -1,15 +1,15 @@
 const { Client } = require("whatsapp-web.js");
-const Store = require("electron-store");
+
 const Window = require("../../Window");
 const path = require("path");
-const { SESSION, LOADING, LOADING_TEXT, QRCODE } = require("./consts/actions");
+const { SESSION, LOADING, LOADING_TEXT, QRCODE, ERROR_TEXT } = require("./consts/actions");
 const { eng } = require("../../texts/authQR");
 
 class Controller {
     constructor(model, view) {
         this._model = model;
         this._view = view;
-       
+      
         this.onReadyResolve = null;
         this.isQRLoaded = false;
         this.session = this._model.get(SESSION);
@@ -32,10 +32,7 @@ class Controller {
         this.client.on("auth_failure", () => {
             this._model.delete(SESSION);
             this.session = null;
-            this._view.webContents.send(
-                LOADING_TEXT,
-                eng.ERROR_RESTARTING
-            );
+            this._view.webContents.send(ERROR_TEXT, eng.ERROR_RESTARTING);
 
             this.initialize(null);
         });
@@ -84,9 +81,9 @@ class Controller {
     };
 }
 
-module.exports = () =>
+module.exports = (model) =>
     new Controller(
-        new Store({ name: "clients" }),
+        model,
         new Window({
             file: path.resolve(path.join(__dirname, "/renderer"), "index.html"),
             width: 500,

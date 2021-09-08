@@ -1,10 +1,41 @@
-const getAuthQRpage = require('./authQR');
-const getMainPage = require('./main')
+const Store = require("electron-store");
 
-const authQRpage = getAuthQRpage();
+const getAuthClientPage = require("./authClient");
+const getMainPage = require("./main");
 
-authQRpage.onClientReady().then(client => {
-    const mainPage = getMainPage(client);
 
-    authQRpage.closeWindow();
-})
+const store = new Store({ name: "client" });
+
+const аuthClientPage = getAuthClientPage(store);
+
+
+аuthClientPage.onClientReady().then((readyClient) => {
+    const mainPage = getMainPage(store, readyClient);
+
+    аuthClientPage.closeWindow();
+});
+
+
+
+
+
+
+
+/*
+    readyClient.on("message", (message) => {
+        if (message.body.toLowerCase().match()) {
+            message.getChat().then((e) => {
+                console.log(e);
+                message.reply(
+                    message.body.replaceAll(, "cам")
+                );
+            });
+            return;
+        }
+
+
+        message.reply(message.body.split("").reverse().join(""));
+
+        // message.getChat().then((e) => console.log(e));
+    });
+*/

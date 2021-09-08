@@ -1,1 +1,1 @@
-module.exports.CONTACTS = "contacts";
+module.exports.MYCONTACTS = "mycontacts";

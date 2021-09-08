@@ -27,6 +27,11 @@ ipcRenderer.on(LOADING_TEXT, (event, text) => {
     loadingTitle.innerText = text;
 });
 
+ipcRenderer.on(ERROR_TEXT, (event, text) => {
+    // red effect
+    loadingTitle.innerText = text;
+});
+
 function loading() {
   !qrcodeWrapper.classList.contains("visually-hidden") &&
       qrcodeWrapper.classList.add("visually-hidden");
