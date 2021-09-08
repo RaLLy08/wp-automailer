@@ -2,17 +2,18 @@ const { Client } = require("whatsapp-web.js");
 
 const Window = require("../../Window");
 const path = require("path");
-const { SESSION, LOADING, LOADING_TEXT, QRCODE, ERROR_TEXT } = require("./consts/actions");
+const { LOADING, LOADING_TEXT, QRCODE } = require("./consts/actions");
 const { eng } = require("../../texts/authQR");
 
 class Controller {
     constructor(model, view) {
         this._model = model;
         this._view = view;
-      
+        
         this.onReadyResolve = null;
         this.isQRLoaded = false;
-        this.session = this._model.get(SESSION);
+
+        this.session = this._model.get('session');
 
         this._view.once("show", () => {
             this._view.webContents.send(LOADING, true);
@@ -28,11 +29,12 @@ class Controller {
         });
 
         this.initialize(this.session);
-
+        
         this.client.on("auth_failure", () => {
-            this._model.delete(SESSION);
+            this._model.clear(); // remove all data connected with client
+
             this.session = null;
-            this._view.webContents.send(ERROR_TEXT, eng.ERROR_RESTARTING);
+            this._view.webContents.send(LOADING_TEXT, eng.ERROR_RESTARTING);
 
             this.initialize(null);
         });
@@ -65,7 +67,7 @@ class Controller {
         this.client.on("authenticated", (session) => {
             if (!this.session) {
                 this.session = session;
-                this._model.set(SESSION, session);
+                this._model.set('session', session);
             }
         });
 

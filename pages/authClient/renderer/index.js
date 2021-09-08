@@ -2,7 +2,7 @@
 
 const { ipcRenderer } = require("electron");
 const { toCanvas } = require("qrcode");
-const { LOADING, LOADING_TEXT, QRCODE } = require("../consts/actions");
+const { LOADING, LOADING_TEXT, QRCODE, ERROR_TEXT } = require("../consts/actions");
 
 const canvas = document.getElementById("canvas");
 const qrcodeWrapper = document.getElementById("qrcode-wrapper");
@@ -24,11 +24,6 @@ ipcRenderer.on(LOADING, (event, isLoading) => {
 });
 
 ipcRenderer.on(LOADING_TEXT, (event, text) => {
-    loadingTitle.innerText = text;
-});
-
-ipcRenderer.on(ERROR_TEXT, (event, text) => {
-    // red effect
     loadingTitle.innerText = text;
 });
 

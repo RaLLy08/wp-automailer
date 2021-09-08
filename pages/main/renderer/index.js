@@ -2,12 +2,10 @@ const { ipcRenderer } = require("electron");
 const { MYCONTACTS } = require("../consts/actions");
 
 const contactsWrapper = document.getElementById("contacts");
+const quitBtn = document.getElementById("quit");
 
-
-ipcRenderer.on(MYCONTACTS, (event, contacts) => {
+ipcRenderer.on(MYCONTACTS, (event, myContacts) => {
     // contactsWrapper.innerHTML = contacts.length;
-
-    const myContacts = JSON.parse(contacts);
 
     contactsWrapper.innerHTML = `<select class="form-select" aria-label="Default select example">
         ${myContacts.map(
@@ -18,7 +16,7 @@ ipcRenderer.on(MYCONTACTS, (event, contacts) => {
 
 });
 
-
+quitBtn.onclick = () => ipcRenderer.send('quit');
 
 // for TEST 
 // const fs = require("fs");

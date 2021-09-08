@@ -10,11 +10,11 @@ class Controller {
 
         this.client = client;
         
-         this._view.once("show",async () => {
+        this._view.once("show", async () => {
             let myContacts = this._model.get("myContacts");
 
             if (!myContacts) {
-                console.log('getContacts');
+                
                 const contacts = await this.client.getContacts();
 
                 myContacts = contacts.filter((el) => el.isMyContact);
@@ -23,11 +23,10 @@ class Controller {
             }
 
             this._view.webContents.send(MYCONTACTS, myContacts);
-         });
+        });
 
        
     }
-
     // setMyContacts = () => {
     //     this.client.getContacts().then((contacts) => {
     //         model.set(
@@ -36,9 +35,11 @@ class Controller {
     //         );
     //     });
     // }
+    closeWindow = () => {
+        this._view.close();
+    }
 
-
-    isReady() {
+    isReady = () => {
 
     }
 }
