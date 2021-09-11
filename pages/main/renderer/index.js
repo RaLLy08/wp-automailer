@@ -1,24 +1,34 @@
 const { ipcRenderer } = require("electron");
-const { MYCONTACTS, CHANGE_ACCOUNT, QUIT } = require("../consts/actions");
+const {
+    MY_CONTACTS,
+    CHANGE_ACCOUNT,
+    QUIT,
+    CONTACTS_REFRESH,
+    CONTACTS_LOADING,
+} = require("../consts/actions");
 
 const contactsSelect = document.getElementById("select-contacts");
-const contactsSelectBtn = document.getElementById("select-contacts-btn");
+const contactsSelectRefreshBtn = document.getElementById("select-contacts-btn");
 const contactsGetLoading = document.getElementById("contacts-get-loading");
 const contactsValue = document.getElementById("contacts-value");
 const changeAccountBtn = document.getElementById("change-account");
 const quitBtn = document.getElementById("quit");
 
-ipcRenderer.on(MYCONTACTS, (event, myContacts) => {
+ipcRenderer.on(MY_CONTACTS, (event, myContacts) => {
     // contactsWrapper.innerHTML = contacts.length;
     setContactsValue(myContacts.length);
 
     setSelectData(myContacts, (el) => el.name + " " + el.number);
-
 });
+
+ipcRenderer.on(CONTACTS_LOADING, (event, isLoading) => {
+    isLoading ? contactsSetLoading() : contactsStopLoading();
+});
+
 
 changeAccountBtn.onclick = () => ipcRenderer.send(CHANGE_ACCOUNT);
 quitBtn.onclick = () => ipcRenderer.send(QUIT);
-
+contactsSelectRefreshBtn.onclick = () => ipcRenderer.send(CONTACTS_REFRESH);
 // for TEST 
 // const fs = require("fs");
 
@@ -49,16 +59,16 @@ function setSelectData(data, viewSelector) {
             )}`;
 }
 
-function selectSetLoading() {
+function contactsSetLoading() {
     contactsGetLoading.classList.remove("visually-hidden");
     contactsSelect.setAttribute("disabled", "");
-    contactsSelectBtn.setAttribute("disabled", "");
+    contactsSelectRefreshBtn.setAttribute("disabled", "");
 }
 
-function selectStopLoading() {
+function contactsStopLoading() {
     contactsGetLoading.classList.add("visually-hidden");
     contactsSelect.removeAttribute("disabled");
-    contactsSelectBtn.removeAttribute("disabled");
+    contactsSelectRefreshBtn.removeAttribute("disabled");
 }
 
 function setContactsValue(value) {

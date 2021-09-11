@@ -1,3 +1,5 @@
-module.exports.MYCONTACTS = "mycontacts";
-module.exports.CHANGE_ACCOUNT = "change-account";
-module.exports.QUIT = "quit";
+module.exports.MY_CONTACTS = "mycontacts-set";
+module.exports.CHANGE_ACCOUNT = "change-account-click";
+module.exports.QUIT = "quit-click";
+module.exports.CONTACTS_REFRESH = "contacts-refresh-click";
+module.exports.CONTACTS_LOADING = "contacts-loading-set";

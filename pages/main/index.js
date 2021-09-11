@@ -1,7 +1,13 @@
 const Store = require("electron-store");
-const Window = require("../../Window");
+const { ipcMain } = require("electron");
 const path = require("path");
-const { MYCONTACTS } = require("./consts/actions");
+
+const Window = require("../../Window");
+const {
+    MY_CONTACTS,
+    CONTACTS_REFRESH,
+    CONTACTS_LOADING,
+} = require("./consts/actions");
 
 class Controller {
     constructor(model, view, client) {
@@ -9,39 +15,47 @@ class Controller {
         this._view = view;
 
         this.client = client;
-        
+
         this._view.once("show", async () => {
-            let myContacts = this._model.get("myContacts");
+            const contacts = this._model.get("contacts");
 
-            if (!myContacts) {
-                
-                const contacts = await this.client.getContacts();
-
-                myContacts = contacts.filter((el) => el.isMyContact);
-
-                model.set("myContacts", myContacts);
+            if (contacts) {
+                this.setSelectContacts(contacts);
+            } else {
+                this.setSelectContacts();
             }
 
-            this._view.webContents.send(MYCONTACTS, myContacts);
         });
 
-       
+        ipcMain.on(CONTACTS_REFRESH, () => {
+            this.setSelectContacts();
+        });
     }
-    // setMyContacts = () => {
-    //     this.client.getContacts().then((contacts) => {
-    //         model.set(
-    //             "contacts",
-    //             contacts.filter((el) => el.isMyContact)
-    //         );
-    //     });
-    // }
+
+    setSelectContacts = async (data, selector = el => el.isMyContact) => {
+        let contacts = data;
+
+        if (!data) {
+            this._view.webContents.send(CONTACTS_LOADING, true);
+
+            contacts = await this.client.getContacts();
+
+            this._model.set("contacts", contacts);
+
+            this._view.webContents.send(CONTACTS_LOADING, false);
+        }
+
+        this._view.webContents.send(
+            MY_CONTACTS,
+            contacts.filter(selector)
+        );
+    };
+
     closeWindow = () => {
         this._view.close();
-    }
+    };
 
-    isReady = () => {
-
-    }
+    isReady = () => {};
 }
 
 module.exports = (store, readyClient) =>

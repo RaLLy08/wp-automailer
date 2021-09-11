@@ -5,6 +5,12 @@
     padding: 10px;
 }
 
+.contacts-header__spiner {
+    margin-top: 6px;
+    width: 23px;
+    height: 23px;
+}
+
 .header__button-wrapper {
     display: flex;
 }
