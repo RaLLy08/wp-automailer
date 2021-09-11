@@ -8,3 +8,7 @@
 .header__button-wrapper {
     display: flex;
 }
+
+.contacts__header {
+    display: flex;
+}

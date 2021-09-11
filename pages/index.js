@@ -5,6 +5,7 @@ const Window = require("../Window");
 const getAuthClientPage = require("./authClient");
 const getMainPage = require("./main");
 const getAlertWindow = require("./alert");
+const { CHANGE_ACCOUNT } = require("./main/consts/actions");
 
 
 const clientStore = new Store({ name: "client" });
@@ -16,25 +17,25 @@ const init = () => {
     аuthClientPage = getAuthClientPage(clientStore);
 
     аuthClientPage.onClientReady().then((readyClient) => {
+
         mainPage = getMainPage(clientStore, readyClient);
-        
-        const rerun = () => {
+
+        readyClient.on("disconnected", () => {
+            const alertWindow = getAlertWindow('Disconected');
+            clientStore.clear();
+
+            alertWindow.onConfirm(() => {
+                init();
+                mainPage.closeWindow();
+            });
+        });
+
+        ipcMain.on(CHANGE_ACCOUNT, () => {
             clientStore.clear();
 
             init();
             mainPage.closeWindow();
-        }
-
-        readyClient.on("disconnected", () => {
-            const alertWindow = getAlertWindow('Disconected');
-
-            alertWindow.onConfirm(() => {
-                rerun();
-            });
         });
-
-        ipcMain.on("quit", rerun);
-
 
         аuthClientPage.closeWindow();
     });

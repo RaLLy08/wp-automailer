@@ -1,0 +1,15 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.wrapper__msg {
+    margin: 10px;
+}
+
+.wrapper__button-wrapper {
+    display: flex;
+}

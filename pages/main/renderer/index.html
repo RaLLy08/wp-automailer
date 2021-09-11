@@ -1,25 +1,69 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="index.css">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="script-src 'self'" />
+    <link
+      rel="stylesheet"
+      href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="index.css" />
     <title>Wp Mailer</title>
   </head>
   <body>
-    <div id='app'>
+    <div id="app">
       <div class="wrapper">
-          <div class="wrapper__header">
-            <div class="header__button-wrapper">
-              <button id='quit' type="button" class="btn btn-outline-secondary">Change account</button>
+        <div class="wrapper__header">
+          <div class="header__button-wrapper mx-sm-2">
+            <button id="change-account" type="button" class="btn btn-outline-secondary">
+              Change account
+            </button>
+             <button id="quit" type="button" class="btn btn-danger ms-2">
+              Quit
+            </button>
+          </div>
+        </div>
+        <div class="wrapper__content">
+
+          <div class="content__contacts">
+            <div class="contacts__header ms-4">
+              <div class="contacts-header__title">
+                <h2>Contacts 
+                <span id="contacts-value" class="text-success"> </span>
+                </h2>
+              </div>
+              <div id="contacts-get-loading" class="contacts-header__spiner mx-2 text-success visually-hidden">
+                <div class="spinner-border" role="status" ></div>
+              </div>
+            </div>
+            <div class="input-group mb-3 px-4">
+              <select id="select-contacts" class="form-select">
+              </select>
+              <div class="input-group-prepend">
+                <button id="select-contacts-btn" class="btn btn-outline-secondary ms-2" type="button">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-arrow-clockwise"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"
+                    />
+                    <path
+                      d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-          <h2>Contacts</h2>
-
-          <div id='contacts'></div>
+        </div>
       </div>
     </div>
     <script src="./index.js"></script>

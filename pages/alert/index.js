@@ -12,6 +12,7 @@ class Alert {
         this.confirmCb = null;
 
         this._view.once("show", async () => {
+            this._view.focus();
             this._view.webContents.send(MESSAGE, message);
         });
 

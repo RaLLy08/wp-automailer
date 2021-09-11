@@ -28,17 +28,13 @@ ipcRenderer.on(LOADING_TEXT, (event, text) => {
 });
 
 function loading() {
-  !qrcodeWrapper.classList.contains("visually-hidden") &&
-      qrcodeWrapper.classList.add("visually-hidden");
+    qrcodeWrapper.classList.add("visually-hidden");
 
-  loadingWrapper.classList.contains("visually-hidden") &&
-      loadingWrapper.classList.remove("visually-hidden");
+    loadingWrapper.classList.remove("visually-hidden");
 }
 
 function stopLoading() {
-    qrcodeWrapper.classList.contains("visually-hidden") &&
-        qrcodeWrapper.classList.remove("visually-hidden");
+    qrcodeWrapper.classList.remove("visually-hidden");
 
-    !loadingWrapper.classList.contains("visually-hidden") &&
-        loadingWrapper.classList.add("visually-hidden");
+    loadingWrapper.classList.add("visually-hidden");
 }
