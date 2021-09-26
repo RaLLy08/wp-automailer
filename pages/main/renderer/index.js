@@ -8,7 +8,7 @@ const {
 } = require("../consts/actions");
 
 const contactsSelect = document.getElementById("select-contacts");
-const contactsSelectRefreshBtn = document.getElementById("select-contacts-btn");
+const contactsSelectRefreshBtn = document.getElementById("select-contacts-refresh-btn");
 const contactsGetLoading = document.getElementById("contacts-get-loading");
 const contactsValue = document.getElementById("contacts-value");
 const changeAccountBtn = document.getElementById("change-account");
@@ -52,6 +52,7 @@ contactsSelectRefreshBtn.onclick = () => ipcRenderer.send(CONTACTS_REFRESH);
 
 function setSelectData(data, viewSelector) {
     if (!viewSelector) return;
+    
 
     contactsSelect.innerHTML = `
             ${data.map(

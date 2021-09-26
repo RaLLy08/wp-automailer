@@ -52,7 +52,7 @@ class Controller {
         this.client = new Client({
             session: this.session,
         });
-
+        
         this.client.initialize();
 
         this.client.on("qr", (qrcode) => {
