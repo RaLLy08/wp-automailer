@@ -5,6 +5,7 @@ const {
     QUIT,
     CONTACTS_REFRESH,
     CONTACTS_LOADING,
+    SEND_MESSAGE,
 } = require("../consts/actions");
 
 const contactsSelect = document.getElementById("select-contacts");
@@ -14,11 +15,14 @@ const contactsValue = document.getElementById("contacts-value");
 const changeAccountBtn = document.getElementById("change-account");
 const quitBtn = document.getElementById("quit");
 
+const sendBtn = document.getElementById("send");
+const messageTextarea = document.getElementById("message");
+
 ipcRenderer.on(MY_CONTACTS, (event, myContacts) => {
     // contactsWrapper.innerHTML = contacts.length;
     setContactsValue(myContacts.length);
 
-    setSelectData(myContacts, (el) => el.name + " " + el.number);
+    setSelectData(myContacts);
 });
 
 ipcRenderer.on(CONTACTS_LOADING, (event, isLoading) => {
@@ -29,6 +33,8 @@ ipcRenderer.on(CONTACTS_LOADING, (event, isLoading) => {
 changeAccountBtn.onclick = () => ipcRenderer.send(CHANGE_ACCOUNT);
 quitBtn.onclick = () => ipcRenderer.send(QUIT);
 contactsSelectRefreshBtn.onclick = () => ipcRenderer.send(CONTACTS_REFRESH);
+sendBtn.onclick = () =>
+    ipcRenderer.send(SEND_MESSAGE, [contactsSelect.value], messageTextarea.value);
 // for TEST 
 // const fs = require("fs");
 
@@ -50,13 +56,13 @@ contactsSelectRefreshBtn.onclick = () => ipcRenderer.send(CONTACTS_REFRESH);
 //     }
 // );
 
-function setSelectData(data, viewSelector) {
-    if (!viewSelector) return;
-    
-
+function setSelectData(data) {
     contactsSelect.innerHTML = `
             ${data.map(
-                (el, i) => `<option value="1">${viewSelector(el, i)}</option>`
+                (el, i) =>
+                    `<option value="${el.id._serialized}">${
+                        el.name + " " + el.number
+                    }</option>`
             )}`;
 }
 

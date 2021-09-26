@@ -1,4 +1,3 @@
-const Store = require("electron-store");
 const { ipcMain } = require("electron");
 const path = require("path");
 
@@ -7,6 +6,7 @@ const {
     MY_CONTACTS,
     CONTACTS_REFRESH,
     CONTACTS_LOADING,
+    SEND_MESSAGE,
 } = require("./consts/actions");
 
 class Controller {
@@ -24,7 +24,10 @@ class Controller {
             } else {
                 this.setSelectContacts();
             }
+        });
 
+        ipcMain.on(SEND_MESSAGE, (_, chats, message) => {
+            this.broadcastMessage(chats, message);
         });
 
         ipcMain.on(CONTACTS_REFRESH, () => {
@@ -32,7 +35,7 @@ class Controller {
         });
     }
 
-    setSelectContacts = async (data, selector = el => el.isMyContact) => {
+    setSelectContacts = async (data, selector = (el) => el.isMyContact) => {
         let contacts = data;
 
         if (!data) {
@@ -45,10 +48,13 @@ class Controller {
             this._view.webContents.send(CONTACTS_LOADING, false);
         }
 
-        this._view.webContents.send(
-            MY_CONTACTS,
-            contacts.filter(selector)
-        );
+        this._view.webContents.send(MY_CONTACTS, contacts.filter(selector));
+    };
+
+    broadcastMessage = async (chats, message) => {
+        for (const chatId of chats) {
+            await this.client.sendMessage(chatId, message);
+        }
     };
 
     closeWindow = () => {
